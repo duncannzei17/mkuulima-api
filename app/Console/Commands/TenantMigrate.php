@@ -32,6 +32,12 @@ class TenantMigrate extends Command
             ->get();
 
         if ($tenants->isEmpty()) {
+            if (!$farmId && $this->option('all')) {
+                $this->info('No active tenants to migrate.');
+
+                return self::SUCCESS;
+            }
+
             $this->error('No matching active tenants found.');
 
             return self::FAILURE;
