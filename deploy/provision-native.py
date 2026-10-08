@@ -54,7 +54,7 @@ def main():
     for old, new in replacements.items():
         if old not in template:
             raise SystemExit(f'Missing expected environment template field: {old}')
-        template = template.replace(old, new, 1)
+        template = template.replace(old, new) if old == '__FARMOS_DOMAIN__' else template.replace(old, new, 1)
 
     redis_template = (ROOT / 'deploy/farmos-redis.conf.template').read_text()
     redis_template = redis_template.replace('__FARMOS_REDIS_PASSWORD__', redis_password)
