@@ -45,6 +45,11 @@ server {
     add_header Referrer-Policy strict-origin-when-cross-origin always;
     add_header Permissions-Policy "camera=(), microphone=(), geolocation=(self)" always;
 
+    location ^~ /.well-known/acme-challenge/ {
+        root /var/www/letsencrypt;
+        default_type text/plain;
+    }
+
     location /api/ {
         proxy_pass http://127.0.0.1:8006;
         proxy_set_header Host $host;
