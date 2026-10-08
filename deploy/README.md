@@ -48,8 +48,9 @@ Redis instance on loopback port 6380. It does not change the existing sites.
 
 Replace `__FARMOS_DOMAIN__` in `nginx-farmos.conf.template`, install it in
 `/etc/nginx/sites-available/`, link it from `sites-enabled`, then run
-`nginx -t` before reloading Nginx. The template serves the SPA and API from
-one origin and restricts PHP execution to Laravel's internal front controller.
+`nginx -t` before reloading Nginx. The template serves the SPA publicly,
+proxies `/api` through `127.0.0.1:8006`, and restricts PHP execution to
+Laravel's internal front controller. The API port is not reachable remotely.
 After DNS resolves to this host, use `certbot --nginx -d DOMAIN` to issue the
 certificate and enable HTTPS redirection. Verify renewal with
 `certbot renew --dry-run`. Only then use the real HTTPS domain in `.env`.

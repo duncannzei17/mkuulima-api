@@ -1,3 +1,33 @@
+# The API listens only on loopback. The public vhost serves the SPA and proxies /api.
+server {
+    listen 127.0.0.1:8006;
+    server_name _;
+    root /var/www/mkuulima/backend/public;
+    index index.php;
+    client_max_body_size 20m;
+
+    location / {
+        try_files $uri /index.php$is_args$args;
+    }
+
+    location = /index.php {
+        internal;
+        include /etc/nginx/fastcgi_params;
+        fastcgi_param SCRIPT_FILENAME /var/www/mkuulima/backend/public/index.php;
+        fastcgi_param HTTP_PROXY "";
+        fastcgi_pass unix:/run/php/php8.4-fpm.sock;
+        fastcgi_read_timeout 60s;
+    }
+
+    location ~ /\. {
+        deny all;
+    }
+
+    location ~ \.php$ {
+        return 404;
+    }
+}
+
 # Replace __FARMOS_DOMAIN__ after DNS points to this server. Certbot adds TLS.
 server {
     listen 80;
@@ -12,18 +42,11 @@ server {
     add_header Permissions-Policy "camera=(), microphone=(), geolocation=(self)" always;
 
     location /api/ {
-        root /var/www/mkuulima/backend/public;
-        try_files $uri /index.php$is_args$args;
-    }
-
-    location = /index.php {
-        internal;
-        root /var/www/mkuulima/backend/public;
-        include /etc/nginx/fastcgi_params;
-        fastcgi_param SCRIPT_FILENAME /var/www/mkuulima/backend/public/index.php;
-        fastcgi_param HTTP_PROXY "";
-        fastcgi_pass unix:/run/php/php8.4-fpm.sock;
-        fastcgi_read_timeout 60s;
+        proxy_pass http://127.0.0.1:8006;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $remote_addr;
+        proxy_set_header X-Forwarded-Proto $scheme;
     }
 
     location /storage/ {
@@ -47,7 +70,5 @@ server {
         deny all;
     }
 
-    location ~ \.php$ {
-        return 404;
-    }
+    location ~ \.php$ { return 404; }
 }
