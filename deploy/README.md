@@ -31,13 +31,12 @@ Redis instance on loopback port 6380. It does not change the existing sites.
 - Copy `native.env.example` to `backend/.env` outside Git, fill all required
   values, and set owner `root:www-data`, mode `0640`. Generate a fresh
   `APP_KEY`; never reuse a key from the pushed development `.env`.
-- Create a PostgreSQL database and role dedicated to FarmOS, then set
-  `DB_PASSWORD` and `TENANT_DB_PASSWORD` to that role's new secret.
-- Install a new Redis service from `farmos-redis.conf.template` and
-  `farmos-redis.service`, replacing the template password with a newly
-  generated secret in both `/etc/redis/farmos.conf` and `backend/.env`.
-  Set the config file to `root:redis` mode `0640`; create
-  `/var/lib/redis-farmos` owned by `redis:redis` mode `0700`.
+- Run `python3 deploy/provision-native.py` once as root. It generates fresh
+  application, PostgreSQL and Redis secrets; creates the FarmOS database and
+  role; writes `.env` as `root:www-data` mode `0640`; and starts a dedicated
+  password protected Redis instance. It refuses to overwrite existing
+  FarmOS secrets or database objects. Its initial mail transport is `log`;
+  configure real SMTP before accepting registrations.
 - Run `php artisan migrate --force`, then `php artisan tenant:migrate --all`
   as `www-data` after a verified backup. Run `php artisan storage:link`,
   `config:cache`, `route:cache`, and `view:cache`.

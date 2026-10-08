@@ -21,5 +21,8 @@
 !/bootstrap/cache/.gitignore
 /.phpunit.cache/
 /coverage/
+/__pycache__/
+**/__pycache__/
+*.pyc
 /*.dump
 /*.sql
