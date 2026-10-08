@@ -1,0 +1,19 @@
+[Unit]
+Description=FarmOS Laravel scheduler
+After=network-online.target postgresql.service farmos-redis.service
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=www-data
+Group=www-data
+WorkingDirectory=/var/www/mkuulima/backend
+ExecStart=/usr/bin/php artisan schedule:work
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=full
+ReadWritePaths=/var/www/mkuulima/backend/storage /var/www/mkuulima/backend/bootstrap/cache
+
+[Install]
+WantedBy=multi-user.target

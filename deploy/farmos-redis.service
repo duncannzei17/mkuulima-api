@@ -1,0 +1,18 @@
+[Unit]
+Description=FarmOS isolated Redis instance
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=redis
+Group=redis
+ExecStart=/usr/bin/redis-server /etc/redis/farmos.conf --supervised no
+Restart=always
+RestartSec=5
+NoNewPrivileges=true
+ProtectSystem=full
+ReadWritePaths=/var/lib/redis-farmos
+
+[Install]
+WantedBy=multi-user.target

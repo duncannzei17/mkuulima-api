@@ -1,0 +1,9 @@
+bind 127.0.0.1
+protected-mode yes
+port 6380
+dir /var/lib/redis-farmos
+appendonly yes
+save 60 1000
+requirepass __FARMOS_REDIS_PASSWORD__
+maxmemory 128mb
+maxmemory-policy noeviction
