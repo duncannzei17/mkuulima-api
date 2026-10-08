@@ -60,7 +60,11 @@ with `certbot certonly --webroot -w /var/www/letsencrypt -d mkuulima.online
 -d www.mkuulima.online`. Then install `nginx-farmos-tls.conf.template` in
 place of the initial FarmOS site file, run `nginx -t`, and reload Nginx.
 This adds HTTPS and redirects HTTP without changing the other virtual hosts.
-Verify renewal with `certbot renew --dry-run`.
+Install `certbot-nginx-deploy-hook.sh` as
+`/etc/letsencrypt/renewal-hooks/deploy/farmos-nginx-reload` (owner root,
+mode `0755`). Certbot's webroot renewal does not reload Nginx by itself;
+the hook checks all vhosts before loading renewed certificates. Verify
+renewal with `certbot renew --dry-run`.
 
 ## Release gates
 
