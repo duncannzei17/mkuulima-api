@@ -9,6 +9,7 @@ import secrets
 import shutil
 import subprocess
 import sys
+import time
 
 
 ROOT = Path('/var/www/mkuulima/backend')
@@ -87,7 +88,17 @@ def main():
          '-Atqc', 'SELECT 1'], env=db_env)
     redis_env = os.environ.copy()
     redis_env['REDISCLI_AUTH'] = redis_password
-    run(['redis-cli', '-h', '127.0.0.1', '-p', '6380', 'ping'], env=redis_env)
+    for attempt in range(20):
+        try:
+            result = run(['redis-cli', '-h', '127.0.0.1', '-p', '6380', 'ping'],
+                         env=redis_env)
+            if result.stdout.strip() == 'PONG':
+                break
+        except subprocess.CalledProcessError:
+            pass
+        time.sleep(0.25)
+    else:
+        raise SystemExit('FarmOS Redis did not become ready after startup.')
     print('FarmOS PostgreSQL, isolated Redis and restricted .env provisioned.')
     print('SMTP remains set to log until mail credentials are configured.')
 

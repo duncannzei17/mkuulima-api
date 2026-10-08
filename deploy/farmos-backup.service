@@ -1,0 +1,11 @@
+[Unit]
+Description=FarmOS PostgreSQL backup with checksum
+After=postgresql.service
+
+[Service]
+Type=oneshot
+User=root
+ExecStart=/usr/bin/python3 /var/www/mkuulima/backend/deploy/backup-native.py
+NoNewPrivileges=true
+ProtectSystem=full
+ReadWritePaths=/var/backups/farmos

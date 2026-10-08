@@ -42,6 +42,11 @@ Redis instance on loopback port 6380. It does not change the existing sites.
   `config:cache`, `route:cache`, and `view:cache`.
 - Install and enable `farmos-horizon.service` and
   `farmos-scheduler.service`. Each process must report active status.
+- Install `farmos-backup.service` and `farmos-backup.timer`, then run the
+  service once before migrations and verify the `.dump.sha256` sidecar.
+  The timer takes a daily local PostgreSQL backup as root with 14-day local
+  retention. Configure an off-host copy and perform an isolated restore drill
+  before production traffic.
 
 ## Web and TLS
 
