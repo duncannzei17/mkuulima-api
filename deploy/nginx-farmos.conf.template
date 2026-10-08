@@ -31,10 +31,14 @@ server {
 # Replace __FARMOS_DOMAIN__ after DNS points to this server. Certbot adds TLS.
 server {
     listen 80;
-    server_name __FARMOS_DOMAIN__;
+    server_name __FARMOS_DOMAIN__ www.__FARMOS_DOMAIN__;
     root /var/www/mkuulima/frontend/dist;
     index index.html;
     client_max_body_size 20m;
+
+    if ($host = www.__FARMOS_DOMAIN__) {
+        return 301 https://__FARMOS_DOMAIN__$request_uri;
+    }
 
     add_header X-Content-Type-Options nosniff always;
     add_header X-Frame-Options DENY always;
